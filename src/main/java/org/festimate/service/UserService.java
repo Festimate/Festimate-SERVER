@@ -21,13 +21,12 @@ public class UserService {
     // 회원가입
     public Long signupUser(String username, String nickname, Integer age, String gender, String school, Integer height, String mbti, List<Appearance> appearanceList) {
         // 닉네임 중복 검사
-        if (userRepository.existsByNickname(nickname)) {
-            throw new CustomException(ErrorCode.INVALID_INPUT_USER_DUPLICATE);
-        }
+        existsByNickname(nickname);
 
-        if(school == null){
+        if (school == null) {
             school = "미입력";
         }
+
         User newUser = new User(username, nickname, age, gender, school, height, mbti, appearanceList);
         return userRepository.save(newUser).getId();
     }
@@ -39,8 +38,15 @@ public class UserService {
         return new UserDetailResponse(user.getNickname(), user.getSchool());
     }
 
-    // 닉네임으로 유저 조회
-    public User findByIdOrThrow(final Long userId) {
+    // 닉네임 중복 검사
+    public void existsByNickname(final String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
+            throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
+        }
+    }
+
+    // ID로 유저 조회
+    private User findByIdOrThrow(final Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
