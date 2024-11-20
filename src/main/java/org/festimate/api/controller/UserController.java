@@ -32,4 +32,12 @@ public class UserController {
         UserDetailResponse userDetail = userService.getUserDetailById(userId);
         return ResponseEntity.ok(userDetail);
     }
+
+    @PostMapping("/check-nickname")
+    public ResponseEntity<Void> checkNickname(
+            @Valid @RequestParam("nickname") String nickname
+    ) {
+        userService.existsByNickname(nickname);
+        return ResponseEntity.ok().build();
+    }
 }
