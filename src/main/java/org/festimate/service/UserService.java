@@ -1,6 +1,7 @@
 package org.festimate.service;
 
 import org.festimate.api.dto.response.ErrorCode;
+import org.festimate.api.dto.response.UserDetailResponse;
 import org.festimate.api.exception.CustomException;
 import org.festimate.domain.entity.Appearance;
 import org.festimate.domain.entity.User;
@@ -31,4 +32,17 @@ public class UserService {
         return userRepository.save(newUser).getId();
     }
 
+    // 유저 정보 조회 (닉네임, 학교)
+    public UserDetailResponse getUserDetailById(Long userId) {
+        // 유저 존재 여부 확인
+        User user = findByIdOrThrow(userId);
+        return new UserDetailResponse(user.getNickname(), user.getSchool());
+    }
+
+    // 닉네임으로 유저 조회
+    public User findByIdOrThrow(final Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+    }
 }
